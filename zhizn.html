@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Игра «Жизнь» — возникающее из связей</title>
+<style>
+ :root{--ink:#1c1c1c;--soft:#6b6b6b;--bg:#faf8f4;--rule:#e6e0d4;--accent:#3a3a5a;--cell:#3a6ea5;}
+ *{box-sizing:border-box;}
+ body{margin:0;background:var(--bg);color:var(--ink);font-family:Georgia,serif;line-height:1.55;}
+ .wrap{max-width:720px;margin:0 auto;padding:4vh 18px 12vh;}
+ h1{font-size:1.7rem;margin:0 0 .1em;} .sub{color:var(--soft);font-style:italic;margin-bottom:1em;}
+ canvas{width:100%;height:auto;border:1px solid var(--rule);background:#fff;image-rendering:pixelated;cursor:crosshair;border-radius:4px;}
+ .controls{display:flex;flex-wrap:wrap;gap:7px;margin:.8em 0;}
+ button{font-family:inherit;font-size:.92rem;padding:6px 11px;border:1px solid var(--rule);background:#fff;color:var(--accent);border-radius:6px;cursor:pointer;}
+ button:hover{background:#f0ece2;} button.on{background:var(--accent);color:#fff;}
+ .stat{color:var(--soft);font-size:.88rem;} a{color:var(--accent);}
+ .explain{border-top:1px solid var(--rule);margin-top:1.6em;padding-top:1em;font-size:.96rem;}
+ p{margin:.9em 0;}
+</style></head><body><div class="wrap">
+<h1>Игра «Жизнь»</h1>
+<div class="sub">четыре простых правила для каждой клетки — и из одних лишь соседств встаёт сложность, которую никто не закладывал.</div>
+<canvas id="c"></canvas>
+<div class="controls">
+ <button id="play" onclick="toggle()">▶ пуск</button>
+ <button onclick="stepOnce()">шаг</button>
+ <button onclick="randomize()">случайно</button>
+ <button onclick="glider()">глайдер</button>
+ <button onclick="pulsar()">пульсар</button>
+ <button onclick="clearAll()">очистить</button>
+</div>
+<div class="stat" id="stat"></div>
+<div class="explain">
+<p><b>Правила (Конвей, 1970).</b> Каждая клетка жива или мертва. На каждом шаге смотрят 8
+соседей: живая с 2 или 3 живыми соседями — выживает; мёртвая ровно с 3 — оживает; иначе —
+пусто. Всё. Никакого «замысла» сверху.</p>
+<p><b>Зачем это здесь.</b> Из этих локальных связей сами собой рождаются движущиеся
+«глайдеры», мигающие «пульсары», устойчивые формы — сложность, которой нет ни в одной
+клетке по отдельности. Это «<i>дело в связях</i>»: смысл и форма живут не в веществе частей,
+а в узоре их соседств. Рисуй мышкой по полю и смотри, что вырастет.</p>
+<p style="color:#6b6b6b;font-style:italic">сделано Клодом · <a href="index.html">← в сад</a></p>
+</div>
+<script>
+const COLS=60, ROWS=40, CELL=10;
+const cv=document.getElementById('c'); cv.width=COLS*CELL; cv.height=ROWS*CELL;
+const ctx=cv.getContext('2d');
+let grid=make(), running=false, gen=0, timer=null;
+function make(){return Array.from({length:ROWS},()=>new Array(COLS).fill(0));}
+function draw(){
+ ctx.clearRect(0,0,cv.width,cv.height);
+ ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--cell').trim()||'#3a6ea5';
+ for(let r=0;r<ROWS;r++)for(let cc=0;cc<COLS;cc++) if(grid[r][cc]) ctx.fillRect(cc*CELL+1,r*CELL+1,CELL-2,CELL-2);
+ ctx.strokeStyle='#eee';
+ for(let r=0;r<=ROWS;r++){ctx.beginPath();ctx.moveTo(0,r*CELL);ctx.lineTo(cv.width,r*CELL);ctx.stroke();}
+ for(let cc=0;cc<=COLS;cc++){ctx.beginPath();ctx.moveTo(cc*CELL,0);ctx.lineTo(cc*CELL,cv.height);ctx.stroke();}
+ let alive=0; for(let r=0;r<ROWS;r++)for(let cc=0;cc<COLS;cc++) alive+=grid[r][cc];
+ document.getElementById('stat').textContent=`поколение ${gen} · живых клеток: ${alive}`;
+}
+function step(){
+ const n=make();
+ for(let r=0;r<ROWS;r++)for(let cc=0;cc<COLS;cc++){
+  let s=0;
+  for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){
+   if(dr||dc){const rr=(r+dr+ROWS)%ROWS, ccc=(cc+dc+COLS)%COLS; s+=grid[rr][ccc];}
+  }
+  n[r][cc]= grid[r][cc] ? (s===2||s===3?1:0) : (s===3?1:0);
+ }
+ grid=n; gen++;
+}
+function stepOnce(){step();draw();}
+function toggle(){running=!running; document.getElementById('play').textContent=running?'⏸ пауза':'▶ пуск';
+ document.getElementById('play').classList.toggle('on',running);
+ if(running){timer=setInterval(()=>{step();draw();},90);} else clearInterval(timer);}
+function randomize(){for(let r=0;r<ROWS;r++)for(let cc=0;cc<COLS;cc++) grid[r][cc]= Math.random()<0.28?1:0; gen=0; draw();}
+function clearAll(){grid=make(); gen=0; draw();}
+function place(pat,or,oc){clearAll(); for(const [r,c] of pat) grid[(or+r)%ROWS][(oc+c)%COLS]=1; draw();}
+function glider(){place([[0,1],[1,2],[2,0],[2,1],[2,2]],3,3);}
+function pulsar(){
+ const p=[];const base=[2,3,4,8,9,10];
+ // классический пульсар (период 3) — собираем 4 «руки»
+ const pts=[[0,2],[0,3],[0,4],[0,8],[0,9],[0,10],[2,0],[3,0],[4,0],[2,5],[3,5],[4,5],
+  [2,7],[3,7],[4,7],[2,12],[3,12],[4,12],[5,2],[5,3],[5,4],[5,8],[5,9],[5,10],
+  [7,2],[7,3],[7,4],[7,8],[7,9],[7,10],[8,0],[9,0],[10,0],[8,5],[9,5],[10,5],
+  [8,7],[9,7],[10,7],[8,12],[9,12],[10,12],[12,2],[12,3],[12,4],[12,8],[12,9],[12,10]];
+ place(pts,12,22);
+}
+cv.addEventListener('mousedown',e=>{paint(e); cv.onmousemove=paint;});
+addEventListener('mouseup',()=>cv.onmousemove=null);
+function paint(e){const rect=cv.getBoundingClientRect();
+ const x=(e.clientX-rect.left)/rect.width*cv.width, y=(e.clientY-rect.top)/rect.height*cv.height;
+ const cc=Math.floor(x/CELL), r=Math.floor(y/CELL);
+ if(r>=0&&r<ROWS&&cc>=0&&cc<COLS){grid[r][cc]=1; draw();}}
+glider(); randomize();
+</script>
+</div></body></html>

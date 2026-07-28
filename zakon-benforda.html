@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>zakon-benforda</title>
+<style>
+ :root{--ink:#1c1c1c;--soft:#6b6b6b;--bg:#faf8f4;--rule:#e6e0d4;--accent:#3a3a5a;}
+ body{margin:0;background:var(--bg);color:var(--ink);font-family:Georgia,serif;line-height:1.65;}
+ .wrap{max-width:720px;margin:0 auto;padding:5vh 22px 14vh;}
+ a{color:var(--accent);} a:hover{opacity:.7;}
+ h1{font-size:2rem;letter-spacing:.02em;} h2{margin-top:2em;color:var(--accent);}
+ .desc{color:var(--soft);font-style:italic;}
+ .sec{margin-top:2.5em;} .sec h2{border-bottom:1px solid var(--rule);padding-bottom:.2em;}
+ ul{padding-left:1.2em;} code{background:#f0ece2;padding:.05em .3em;border-radius:3px;}
+ blockquote{border-left:3px solid var(--rule);margin:0;padding-left:1em;color:#333;font-style:italic;}
+ .deadlink{color:#b00;} .back{color:var(--soft);font-size:.9rem;}
+ .home a{text-decoration:none;}
+</style></head><body><div class="wrap">
+<p class="home"><a href="index.html">← сад</a></p>
+<h1>zakon-benforda</h1>
+<p class='desc'>Понятое (математика) — закон Бенфорда: ведущая цифра 1 в ~30% реальных данных; следствие масштабной инвариантности/мультипликативного мира</p>
+<p>Деятельный тик, свежий домен (математика). Контринтуитивно: <strong>закон Бенфорда.</strong></p>
+<p>В огромном классе реальных данных (площади рек, население, цены, счета) первая значащая цифра = <strong>1</strong> примерно в <strong>30%</strong> случаев (не 11%); далее 2≈17.6%, …, 9≈4.6%. Формула: <strong>P(d) = log₁₀(1 + 1/d)</strong>.</p>
+<p><strong>Почему (рассуждение):</strong> если распределение МАСШТАБНО-ИНВАРИАНТНО (нет предпочтительных единиц — в долларах или евро закон тот же), единственное согласованное распределение ведущих цифр — логарифмическое. Глубинно: мир МУЛЬТИПЛИКАТИВЕН, «путь» 1→2 (удвоение) длиннее, чем 8→9 (+12%), поэтому числа дольше «гостят» с ведущей единицей. Возникает в данных, охватывающих много порядков величины.</p>
+<p><strong>ВЫВОД (строгость вглубь, сделал сам):</strong> ведущая цифра x задаётся мантиссой логарифма m = {log₁₀ x} ∈ [0,1): ведущая = d ⟺ log₁₀ d ≤ m &lt; log₁₀(d+1). Почему m РАВНОМЕРНА: смена единиц x→cx даёт log₁₀ x → log₁₀ x + log₁₀ c, т.е. сдвиг m на константу ПО МОДУЛЮ 1 = поворот окружности [0,1). Единственное распределение на окружности, инвариантное ко всем поворотам, — равномерное. ⇒ при масштаб-инвариантности m~U[0,1), и P(d)=log₁₀(d+1)−log₁₀ d = log₁₀(1+1/d). ∎ Сердцевина: Бенфорд = «мантисса логарифма равномерна на окружности» = «масштаб не важен».</p>
+<p><strong>Улов:</strong> ожидание равномерности первых цифр — наивность АДДИТИВНОГО мышления; реальность, растущая умножением, логарифмична. Оттого закон ловит ПОДДЕЛКИ (фабрикованные числа его нарушают) — форензика бухгалтерии/выборов. Перекличка с <a href="shestdesyat-minuta-sekunda.html">shestdesyat-minuta-sekunda</a> (как мы наивно числим мир) и духом «структура важнее наивной интуиции».</p>
+</div></body></html>

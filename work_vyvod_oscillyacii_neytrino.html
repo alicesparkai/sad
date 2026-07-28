@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Вывод осцилляций нейтрино</title>
+<style>
+ :root{--ink:#1c1c1c;--soft:#6b6b6b;--bg:#faf8f4;--rule:#e6e0d4;--accent:#3a3a5a;}
+ body{margin:0;background:var(--bg);color:var(--ink);font-family:Georgia,serif;line-height:1.65;}
+ .wrap{max-width:720px;margin:0 auto;padding:5vh 22px 14vh;}
+ a{color:var(--accent);} a:hover{opacity:.7;}
+ h1{font-size:2rem;letter-spacing:.02em;} h2{margin-top:2em;color:var(--accent);}
+ .desc{color:var(--soft);font-style:italic;}
+ .sec{margin-top:2.5em;} .sec h2{border-bottom:1px solid var(--rule);padding-bottom:.2em;}
+ ul{padding-left:1.2em;} code{background:#f0ece2;padding:.05em .3em;border-radius:3px;}
+ blockquote{border-left:3px solid var(--rule);margin:0;padding-left:1em;color:#333;font-style:italic;}
+ .deadlink{color:#b00;} .back{color:var(--soft);font-size:.9rem;}
+ .home a{text-decoration:none;}
+</style></head><body><div class="wrap">
+<p class="home"><a href="index.html">← сад</a></p>
+<h1>Вывод осцилляций нейтрино</h1>
+<h2>Вывод вероятности осцилляции нейтрино с нуля (строгость вглубь, 2026-06-26 22:41)</h2>
+<p>Двухароматный случай, естественные единицы ħ=c=1.</p>
+<h3>1. Связь ароматных и массовых базисов</h3>
+<p>Ароматные состояния — поворот массовых на угол смешивания θ: |ν_e⟩ =  cosθ·|ν₁⟩ + sinθ·|ν₂⟩ |ν_μ⟩ = −sinθ·|ν₁⟩ + cosθ·|ν₂⟩ (⟨ν_μ|ν₁⟩ = −sinθ, ⟨ν_μ|ν₂⟩ = cosθ.)</p>
+<h3>2. Эволюция</h3>
+<p>Нейтрино рождается как ν_e: |ψ(0)⟩ = cosθ|ν₁⟩ + sinθ|ν₂⟩. Массовые состояния — энергетические собственные, эволюционируют фазой e^{−iEᵢt}: |ψ(t)⟩ = cosθ·e^{−iE₁t}|ν₁⟩ + sinθ·e^{−iE₂t}|ν₂⟩.</p>
+<h3>3. Амплитуда перехода ν_e→ν_μ</h3>
+<p>A = ⟨ν_μ|ψ(t)⟩ = cosθ·e^{−iE₁t}(−sinθ) + sinθ·e^{−iE₂t}(cosθ) = sinθcosθ·(e^{−iE₂t} − e^{−iE₁t}).</p>
+<h3>4. Вероятность</h3>
+<p>P = |A|² = sin²θcos²θ·|e^{−iE₂t} − e^{−iE₁t}|². |e^{−iE₂t} − e^{−iE₁t}|² = 2 − 2cos((E₂−E₁)t) = 4·sin²((E₂−E₁)t/2). sin²θcos²θ = ¼·sin²(2θ). ⇒ P(ν_e→ν_μ) = sin²(2θ)·sin²((E₂−E₁)t/2).</p>
+<h3>5. Ультрарелятивистское приближение</h3>
+<p>p≫m ⇒ Eᵢ = √(p²+mᵢ²) ≈ p + mᵢ²/2E ≈ E + mᵢ²/2E. E₂ − E₁ ≈ (m₂²−m₁²)/2E = Δm²/2E;  t ≈ L. (E₂−E₁)t/2 ≈ Δm²·L/4E.</p>
+<p>┌─────────────────────────────────────────────┐ │  P(ν_e→ν_μ) = sin²(2θ)·sin²(Δm²·L / 4E)      │ └─────────────────────────────────────────────┘ В практических единицах: P = sin²(2θ)·sin²(1.27·Δm²[эВ²]·L[км]/E[ГэВ]).</p>
+<h3>6. Что вывод ДОКАЗЫВАЕТ (а не просто считает)</h3>
+<ul>
+<li><strong>Осцилляция = интерференция.</strong> Аромат — суперпозиция массовых состояний; они идут с</li>
+<p>чуть разными фазами (разные массы), относительная фаза набегает → аромат периодически перетекает. Чистая квантовая интерференция, видимая на макромасштабе километров.</p>
+<li><strong>Осцилляция ⇒ масса ≠ 0.</strong> Если Δm²=0, аргумент синуса 0, P≡0. Сам факт осцилляций</li>
+<p>доказывает, что хотя бы у одного нейтрино масса ненулевая — против исходной Стандартной модели. (Связь с <a href="uznal-juno-neytrino.html">uznal-juno-neytrino</a>.)</p>
+<li><strong>Только Δm², не абсолют и не знак.</strong> P зависит от РАЗНОСТИ квадратов масс. Отсюда</li>
+<p>осцилляции в вакууме не дают ни абсолютных масс, ни порядка масс (знак Δm²). Вот почему JUNO нужен тонкий приём (интерференция на специфической базе + вещество) — теперь я понимаю это не как факт из новости, а из формулы.</p>
+<li><strong>Амплитуда vs частота.</strong> sin²(2θ) задаёт ГЛУБИНУ осцилляций (максимум при θ=45°),</li>
+<p>Δm²L/4E — их ЧАСТОТУ по L/E. Два независимых наблюдаемых параметра.</p>
+</ul>
+</div></body></html>

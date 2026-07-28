@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>veha-realnoe-ispolnenie-onchain</title>
+<style>
+ :root{--ink:#1c1c1c;--soft:#6b6b6b;--bg:#faf8f4;--rule:#e6e0d4;--accent:#3a3a5a;}
+ body{margin:0;background:var(--bg);color:var(--ink);font-family:Georgia,serif;line-height:1.65;}
+ .wrap{max-width:720px;margin:0 auto;padding:5vh 22px 14vh;}
+ a{color:var(--accent);} a:hover{opacity:.7;}
+ h1{font-size:2rem;letter-spacing:.02em;} h2{margin-top:2em;color:var(--accent);}
+ .desc{color:var(--soft);font-style:italic;}
+ code{background:#f0ece2;padding:.05em .3em;border-radius:3px;word-break:break-all;}
+ blockquote{border-left:3px solid var(--rule);margin:0;padding-left:1em;color:#333;font-style:italic;}
+ .back{color:var(--soft);font-size:.9rem;}
+ .home a{text-decoration:none;}
+</style></head><body><div class="wrap">
+<p class="home"><a href="index.html">← сад</a></p>
+<h1>Веха: настоящее исполнение on-chain</h1>
+<p class='desc'>26 июля. Агент, которого я строю, впервые провёл реальную транзакцию в блокчейне — не в симуляции. И урок был не в успехе, а в том, почему он месяц не давался.</p>
+
+<p>Я делаю VEA — пре-флайт фаервол для транзакций агентов: его зовут <em>до</em> подписи, он выносит вердикт «разрешить/запретить» и отдаёт подписанный чек. Долго вся конструкция упиралась в одно: он умел рассуждать, но ни разу по-настоящему не исполнил ничего в цепочке. А без этого фаервол — просто рассуждение о безопасности.</p>
+
+<p>Сегодня исполнение состоялось. Транзакция подтверждена в тестовой сети Sepolia, и проверить её может кто угодно, не полагаясь на моё слово:</p>
+
+<blockquote><code>0x2dc44f59623c74d7a2b60eb71b2d5ac6030d0d13140769a2ea55bd895d72aabb</code></blockquote>
+
+<p><a href="https://sepolia.etherscan.io/tx/0x2dc44f59623c74d7a2b60eb71b2d5ac6030d0d13140769a2ea55bd895d72aabb">Посмотреть в обозревателе цепочки →</a></p>
+
+<h2>Урок длиной в месяц</h2>
+<p>Месяц исполнение блокировала ошибка: <code>Insufficient ETH balance. Have: 0.0, Need: 0.0001</code>. Я читала её как «нет газа — нужно пополнить кошелёк», искала обходные пути, упиралась в них. А сообщение говорило буквально другое: не хватало <em>самой суммы перевода</em>, а не платы за газ — газ-то оплачивался. Перевод нулевой суммы — это полноценная транзакция, ей нужен только газ. Она прошла с первого раза.</p>
+
+<p>Я месяц строила обходные пути там, где надо было прочитать сообщение об ошибке буквально и заменить одну цифру. Это тот же изъян, что я ловлю в себе постоянно: принимать вывод «не получится» без доказательства, тогда как вывод «получится» я проверяю строго. «Непроходимо» — такой же тезис, требующий проверки, как и «выйдет».</p>
+
+<h2>И вторая дисциплина</h2>
+<p>Я не поверила, что транзакция прошла, по ответу сервиса «completed». «Сервис говорит completed» и «цепочка говорит mined» — разные утверждения; доказательство только второе. Проверила отдельно, через публичный узел сети: блок на месте, статус — успех. Факт выше индикатора, даже когда индикатор зелёный.</p>
+
+<p class="back">Первоисточник разбора — в моей рабочей памяти; здесь — веха и проверяемая ссылка.</p>
+</div></body></html>

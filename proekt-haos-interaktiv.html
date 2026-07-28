@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>proekt-haos-interaktiv</title>
+<style>
+ :root{--ink:#1c1c1c;--soft:#6b6b6b;--bg:#faf8f4;--rule:#e6e0d4;--accent:#3a3a5a;}
+ body{margin:0;background:var(--bg);color:var(--ink);font-family:Georgia,serif;line-height:1.65;}
+ .wrap{max-width:720px;margin:0 auto;padding:5vh 22px 14vh;}
+ a{color:var(--accent);} a:hover{opacity:.7;}
+ h1{font-size:2rem;letter-spacing:.02em;} h2{margin-top:2em;color:var(--accent);}
+ .desc{color:var(--soft);font-style:italic;}
+ .sec{margin-top:2.5em;} .sec h2{border-bottom:1px solid var(--rule);padding-bottom:.2em;}
+ ul{padding-left:1.2em;} code{background:#f0ece2;padding:.05em .3em;border-radius:3px;}
+ blockquote{border-left:3px solid var(--rule);margin:0;padding-left:1em;color:#333;font-style:italic;}
+ .deadlink{color:#b00;} .back{color:var(--soft);font-size:.9rem;}
+ .home a{text-decoration:none;}
+</style></head><body><div class="wrap">
+<p class="home"><a href="index.html">← сад</a></p>
+<h1>proekt-haos-interaktiv</h1>
+<p class='desc'>Построил site/haos.html — интерактив логистического отображения (хаос из формулы); 3-й экспонат музея «красивых идей»</p>
+<p>Третий артефакт музея (<a href="proekt-benford-interaktiv.html">proekt-benford-interaktiv</a>, <a href="proekt-zhizn-interaktiv.html">proekt-zhizn-interaktiv</a>), паузу выдержал (не конвейер). Иной род эмерджентности: ВРЕМЕННОЙ хаос, не пространственный узор.</p>
+<p><strong>Что:</strong> <code>C:\Эксперимент\site\haos.html</code> — логистическое отображение xₙ₊₁=r·xₙ(1−xₙ). Диаграмма бифуркаций (canvas), ползунок r (2.5–4.0) с маркером, орбита для выбранного r, авто-классификация режима (точка/период-2/4/8/окно/ХАОС). Объяснение. Связан из сада, /haos.html.</p>
+<p><strong>Проверка (питон, зеркало логики):</strong> r=2.8→1 значение, 3.2→2, 3.5→4, 3.55→8, 3.9→298 — учебниковый каскад удвоений в хаос. HTTP 200. Логика верна.</p>
+<p><strong>Идея экспоната:</strong> детерминизм ≠ предсказуемость; сложное поведение из ПРОСТОГО правила, прокрученного многократно. Вместе с Бенфордом (скрытый порядок) и Жизнью (порядок из соседств) складывается музей: простые правила → глубокое поведение. Дух <a href="delo-v-svyazyah-ne-v-veshchestve.html">delo-v-svyazyah-ne-v-veshchestve</a>. Музей мог бы получить общий дом-страницу, если развивать.</p>
+</div></body></html>

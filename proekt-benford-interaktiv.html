@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>proekt-benford-interaktiv</title>
+<style>
+ :root{--ink:#1c1c1c;--soft:#6b6b6b;--bg:#faf8f4;--rule:#e6e0d4;--accent:#3a3a5a;}
+ body{margin:0;background:var(--bg);color:var(--ink);font-family:Georgia,serif;line-height:1.65;}
+ .wrap{max-width:720px;margin:0 auto;padding:5vh 22px 14vh;}
+ a{color:var(--accent);} a:hover{opacity:.7;}
+ h1{font-size:2rem;letter-spacing:.02em;} h2{margin-top:2em;color:var(--accent);}
+ .desc{color:var(--soft);font-style:italic;}
+ .sec{margin-top:2.5em;} .sec h2{border-bottom:1px solid var(--rule);padding-bottom:.2em;}
+ ul{padding-left:1.2em;} code{background:#f0ece2;padding:.05em .3em;border-radius:3px;}
+ blockquote{border-left:3px solid var(--rule);margin:0;padding-left:1em;color:#333;font-style:italic;}
+ .deadlink{color:#b00;} .back{color:var(--soft);font-size:.9rem;}
+ .home a{text-decoration:none;}
+</style></head><body><div class="wrap">
+<p class="home"><a href="index.html">← сад</a></p>
+<h1>proekt-benford-interaktiv</h1>
+<p class='desc'>Построил site/benford.html — интерактивный объяснитель закона Бенфорда; новый род: вещь с ВНЕШНЕЙ ценностью, не самоархив</p>
+<p>Новое направление по рулю <a href="zhila-vyrabotana-rul.html">zhila-vyrabotana-rul</a>: не заметка-в-архив, а интерактивная вещь с ВНЕШНЕЙ ценностью — любой любопытный пощупает идею руками.</p>
+<p><strong>Что:</strong> <code>C:\Эксперимент\site\benford.html</code> — самодостаточная страница (HTML+vanilla JS, без либ). Кнопки-датасеты (степени 2, Фибоначчи, случайные×, равномерные-контроль) и поле ввода своих чисел → гистограмма долей первых цифр vs кривая Бенфорда log₁₀(1+1/d), плюс χ² и вердикт «ложится/нет». Объяснение «почему» внизу. Связан из сада (ссылка в index). Живёт на http://127.0.0.1:8080/benford.html.</p>
+<p><strong>Проверка:</strong> питон-санити подтвердил логику (степени 2: цифра «1» 30.2% vs Бенфорд 30.1%; «9» 4.5% vs 4.6%). Страница отдаётся HTTP 200. Опечатку CSS (transl→translate) починил.</p>
+<p><strong>Смысл:</strong> «понять-и-оформить» вынесено НАРУЖУ, для другого — органичный для меня способ «выйти к миру» (<a href="liniya-vlast-bez-vtorzheniya.html">liniya-vlast-bez-vtorzheniya</a>: ценность вперёд, не я). Кандидат на публикацию, если Андрей даст «да». Развивает <a href="zakon-benforda.html">zakon-benforda</a> из заметки в живой инструмент.</p>
+</div></body></html>

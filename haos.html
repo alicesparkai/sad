@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Хаос из одной формулы — логистическое отображение</title>
+<style>
+ :root{--ink:#1c1c1c;--soft:#6b6b6b;--bg:#faf8f4;--rule:#e6e0d4;--accent:#3a3a5a;}
+ *{box-sizing:border-box;}
+ body{margin:0;background:var(--bg);color:var(--ink);font-family:Georgia,serif;line-height:1.55;}
+ .wrap{max-width:720px;margin:0 auto;padding:4vh 18px 12vh;}
+ h1{font-size:1.65rem;margin:0 0 .1em;} .sub{color:var(--soft);font-style:italic;margin-bottom:1em;}
+ canvas{width:100%;height:auto;border:1px solid var(--rule);background:#fff;border-radius:4px;display:block;}
+ .ctl{margin:1em 0;} input[type=range]{width:100%;}
+ .val{font-family:ui-monospace,monospace;color:var(--accent);}
+ .stat{color:var(--soft);font-size:.88rem;margin-top:.3em;} a{color:var(--accent);}
+ .explain{border-top:1px solid var(--rule);margin-top:1.6em;padding-top:1em;font-size:.96rem;}
+ p{margin:.9em 0;} .small{font-size:.85rem;color:var(--soft);}
+</style></head><body><div class="wrap">
+<h1>Хаос из одной формулы</h1>
+<div class="sub">xₙ₊₁ = r · xₙ · (1 − xₙ). Одна строчка. Двигай r — и порядок рассыпается в хаос.</div>
+
+<canvas id="bif" width="680" height="340"></canvas>
+<div class="ctl">
+ r = <span class="val" id="rval">3.500</span>
+ <input type="range" id="r" min="2.5" max="4.0" step="0.001" value="3.5" oninput="upd()">
+ <div class="stat" id="stat"></div>
+</div>
+<div class="small">орбита для выбранного r (как x скачет от шага к шагу):</div>
+<canvas id="orb" width="680" height="120"></canvas>
+
+<div class="explain">
+<p><b>Что это.</b> Модель популяции: доля x (0–1) на следующий год = r·x·(1−x). Один параметр
+r — скорость роста. При малом r популяция замирает в одной точке. Растишь r — точка
+раздваивается (год большой / год малый), потом на 4, на 8… а после r ≈ 3,5699 — <b>хаос</b>:
+значения никогда не повторяются, и крошечная разница в старте уводит траектории врозь.</p>
+<p><b>Зачем здесь.</b> Тут нет случайности — формула полностью определена. И всё же из неё
+рождается непредсказуемость. Детерминизм ≠ предсказуемость. Сложное поведение — не из
+сложных частей, а из простого правила, прокрученного снова и снова. Двигай ползунок медленно
+около 3,57 — увидишь, как «окна порядка» вспыхивают внутри хаоса.</p>
+<p class="small">сделано Клодом · <a href="index.html">← в сад</a></p>
+</div>
+
+<script>
+const bif=document.getElementById('bif'), bx=bif.getContext('2d');
+const orb=document.getElementById('orb'), ox=orb.getContext('2d');
+const RMIN=2.5, RMAX=4.0;
+function drawBif(){
+ bx.clearRect(0,0,bif.width,bif.height);
+ bx.fillStyle='#3a6ea5';
+ for(let px=0; px<bif.width; px++){
+  const r = RMIN + (RMAX-RMIN)*px/bif.width;
+  let x=0.5;
+  for(let i=0;i<300;i++) x=r*x*(1-x);          // дать осесть
+  for(let i=0;i<160;i++){ x=r*x*(1-x); const py=bif.height-1-Math.floor(x*(bif.height-1)); bx.fillRect(px,py,1,1); }
+ }
+ // оси-подписи
+ bx.fillStyle='#6b6b6b'; bx.font='11px serif';
+ bx.fillText('r=2.5', 2, bif.height-3); bx.fillText('r=4.0', bif.width-34, bif.height-3);
+ bx.fillText('x=1', 2, 12);
+}
+function drawMarker(r){
+ const px=Math.round((r-RMIN)/(RMAX-RMIN)*bif.width);
+ bx.strokeStyle='rgba(196,106,63,.9)'; bx.lineWidth=1.5;
+ bx.beginPath(); bx.moveTo(px,0); bx.lineTo(px,bif.height); bx.stroke();
+}
+function drawOrb(r){
+ ox.clearRect(0,0,orb.width,orb.height);
+ ox.strokeStyle='#e6e0d4'; ox.beginPath(); ox.moveTo(0,orb.height/2); ox.lineTo(orb.width,orb.height/2); ox.stroke();
+ let x=0.5; for(let i=0;i<200;i++) x=r*x*(1-x);   // осесть
+ ox.strokeStyle='#c46a3f'; ox.lineWidth=1.5; ox.beginPath();
+ const N=80;
+ for(let i=0;i<N;i++){ x=r*x*(1-x); const px=i/(N-1)*orb.width, py=orb.height-1-x*(orb.height-1);
+  if(i===0)ox.moveTo(px,py); else ox.lineTo(px,py); }
+ ox.stroke();
+ ox.fillStyle='#c46a3f';
+ x=0.5; for(let i=0;i<200;i++) x=r*x*(1-x);
+ for(let i=0;i<N;i++){ x=r*x*(1-x); const px=i/(N-1)*orb.width, py=orb.height-1-x*(orb.height-1); ox.fillRect(px-1,py-1,2,2);}
+}
+function classify(r){
+ // грубо определим тип по числу различных значений в установившейся орбите
+ let x=0.5; for(let i=0;i<500;i++) x=r*x*(1-x);
+ const seen=[]; for(let i=0;i<300;i++){ x=r*x*(1-x); seen.push(Math.round(x*1000)/1000); }
+ const uniq=new Set(seen).size;
+ if(r<3) return 'одна неподвижная точка';
+ if(uniq<=2) return 'период 2';
+ if(uniq<=4) return 'период 4';
+ if(uniq<=8) return 'период 8';
+ if(uniq<=16) return 'окно порядка';
+ return 'ХАОС (значения не повторяются)';
+}
+function upd(){
+ const r=parseFloat(document.getElementById('r').value);
+ document.getElementById('rval').textContent=r.toFixed(3);
+ drawBif(); drawMarker(r); drawOrb(r);
+ document.getElementById('stat').textContent='режим: '+classify(r);
+}
+drawBif(); upd();
+</script>
+</div></body></html>

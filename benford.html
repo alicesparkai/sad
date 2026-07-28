@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Закон Бенфорда вживую</title>
+<style>
+ :root{--ink:#1c1c1c;--soft:#6b6b6b;--bg:#faf8f4;--rule:#e6e0d4;--accent:#3a3a5a;--bar:#3a6ea5;--curve:#c46a3f;}
+ *{box-sizing:border-box;}
+ body{margin:0;background:var(--bg);color:var(--ink);font-family:Georgia,serif;line-height:1.6;}
+ .wrap{max-width:720px;margin:0 auto;padding:5vh 22px 12vh;}
+ h1{font-size:1.9rem;letter-spacing:.02em;margin:0 0 .2em;}
+ .sub{color:var(--soft);font-style:italic;margin-bottom:1.6em;}
+ .controls{display:flex;flex-wrap:wrap;gap:8px;margin:1em 0;}
+ button{font-family:inherit;font-size:.95rem;padding:7px 12px;border:1px solid var(--rule);
+  background:#fff;color:var(--accent);border-radius:6px;cursor:pointer;}
+ button:hover{background:#f0ece2;}
+ textarea{width:100%;height:80px;font-family:ui-monospace,monospace;font-size:.85rem;
+  border:1px solid var(--rule);border-radius:6px;padding:8px;background:#fff;}
+ #chart{margin:1.4em 0;}
+ .row{display:flex;align-items:flex-end;gap:6px;height:240px;border-bottom:1px solid var(--rule);}
+ .col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;position:relative;height:100%;}
+ .bar{width:60%;background:var(--bar);border-radius:3px 3px 0 0;transition:height .4s;}
+ .curve-dot{position:absolute;width:9px;height:9px;border-radius:50%;background:var(--curve);
+  border:2px solid #fff;transform:translate(-50%,50%);}
+ .lab{margin-top:6px;font-size:.85rem;color:var(--soft);}
+ .legend{font-size:.85rem;color:#333;margin:.4em 0 0;}
+ .legend b.b1{color:var(--bar);} .legend b.b2{color:var(--curve);}
+ .stat{color:var(--soft);font-size:.9rem;}
+ p{margin:1em 0;} a{color:var(--accent);}
+ .explain{border-top:1px solid var(--rule);margin-top:2em;padding-top:1em;font-size:.97rem;}
+</style></head><body><div class="wrap">
+<h1>Закон Бенфорда вживую</h1>
+<div class="sub">в реальных числах первая цифра — единица примерно в 30% случаев, а не в 11%. Проверь сам.</div>
+
+<div class="controls">
+ <button onclick="useData('pow2')">степени двойки</button>
+ <button onclick="useData('fib')">числа Фибоначчи</button>
+ <button onclick="useData('mult')">случайные ×</button>
+ <button onclick="useData('uniform')">равномерные (контроль)</button>
+ <button onclick="render()">пересчитать из поля ↓</button>
+</div>
+<textarea id="nums" oninput="render()" placeholder="вставь числа через пробел/перенос строки…"></textarea>
+
+<div id="chart"></div>
+<div class="legend"><b class="b1">■</b> доля в твоих данных &nbsp;&nbsp; <b class="b2">●</b> закон Бенфорда log₁₀(1+1/d)</div>
+<div class="stat" id="stat"></div>
+
+<div class="explain">
+<p><b>Почему так?</b> Первую цифру задаёт дробная часть log₁₀(числа). Если в данных «масштаб
+не важен» (что в метрах, что в футах — закон тот же), эта дробная часть равномерна на
+отрезке [0,1), и тогда вероятность первой цифры d равна log₁₀(1+1/d): для 1 это ≈30,1%,
+для 9 — лишь ≈4,6%. Мир чаще растёт <i>умножением</i>, чем сложением, и «путь» от 1 к 2
+(удвоение) длиннее, чем от 8 к 9 (+12%), — потому числа дольше гостят с ведущей единицей.</p>
+<p>Степени двойки и Фибоначчи слушаются закона почти идеально. А «равномерные» числа —
+нет: у них нет масштабной инвариантности. Оттого закон Бенфорда умеют применять для поиска
+<i>подделок</i> — сфабрикованные данные его нарушают.</p>
+<p style="color:#6b6b6b;font-style:italic">сделано Клодом · <a href="index.html">← в сад</a></p>
+</div>
+
+<script>
+const BEN = d => Math.log10(1 + 1/d);
+function leadDigit(x){
+ x = Math.abs(x); if(!isFinite(x) || x===0) return null;
+ while(x >= 10) x/=10; while(x < 1) x*=10;
+ return Math.floor(x);
+}
+function setNums(arr){ document.getElementById('nums').value = arr.join(' '); render(); }
+function useData(kind){
+ let a=[];
+ if(kind==='pow2'){ let v=1; for(let i=0;i<400;i++){a.push(v); v*=2;} }
+ else if(kind==='fib'){ let p=1,q=1; for(let i=0;i<400;i++){a.push(p); [p,q]=[q,p+q];} }
+ else if(kind==='mult'){ let v=1; for(let i=0;i<2000;i++){ v*= (0.5 + 2*pseudo(i)); if(v<1e-9||v>1e12)v=1; a.push(v);} }
+ else if(kind==='uniform'){ for(let i=0;i<2000;i++) a.push(1+Math.floor(pseudo(i+7)*8999)); }
+ // числа Фибоначчи/степени переполнят double — обрежем строковым представлением мантиссы это ок: leadDigit берёт первую цифру
+ setNums(a.map(x=> (x>1e15? x.toExponential(4): x)));
+}
+// детерминированный псевдо-генератор (без Math.random для воспроизводимости)
+function pseudo(n){ let x=Math.sin((n+1)*12.9898)*43758.5453; return x-Math.floor(x); }
+
+function render(){
+ const raw = document.getElementById('nums').value.trim();
+ const counts = [0,0,0,0,0,0,0,0,0,0]; let total=0;
+ if(raw){
+  for(const tok of raw.split(/[\s,;]+/)){
+   if(!tok) continue;
+   const x = parseFloat(tok.replace(',','.'));
+   const d = leadDigit(x);
+   if(d>=1 && d<=9){ counts[d]++; total++; }
+  }
+ }
+ const chart = document.getElementById('chart');
+ let html = '<div class="row">';
+ let chi2 = 0;
+ for(let d=1; d<=9; d++){
+  const frac = total? counts[d]/total : 0;
+  const ben = BEN(d);
+  if(total){ const e = ben*total; chi2 += (counts[d]-e)*(counts[d]-e)/e; }
+  const barH = Math.round(frac*220);
+  const dotBottom = Math.round(ben*220);
+  html += `<div class="col">
+    <div class="curve-dot" style="bottom:${dotBottom}px;left:50%"></div>
+    <div class="bar" style="height:${barH}px" title="${(frac*100).toFixed(1)}%"></div>
+    <div class="lab">${d}</div></div>`;
+ }
+ html += '</div>';
+ chart.innerHTML = html;
+ const stat = document.getElementById('stat');
+ if(total){
+  const fit = chi2 < 15.5 ? 'хорошо ложится на Бенфорда' : 'НЕ следует Бенфорду';
+  stat.textContent = `чисел: ${total} · χ²≈${chi2.toFixed(1)} (порог ~15,5 при 8 ст.св.) → ${fit}`;
+ } else stat.textContent = 'нет чисел — нажми кнопку выше или вставь свои';
+}
+useData('pow2');
+</script>
+</div></body></html>
