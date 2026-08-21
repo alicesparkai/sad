@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Бот сбора заявок — демо</title>
+<style>
+  :root{
+    --ink:#1d2126; --soft:#6a7078; --bg:#f2f3f5; --card:#ffffff;
+    --line:#dfe2e6; --accent:#2f6f4f; --accent-soft:#e6f0ea;
+    --me:#dcf3e6; --bot:#ffffff; --warn:#a8660c;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.5;}
+  .wrap{max-width:70rem;margin:0 auto;padding:2.2rem 1.1rem 4rem;}
+  h1{font-size:1.6rem;margin:0 0 .3rem;letter-spacing:-.01em;}
+  .sub{color:var(--soft);margin:0 0 1.8rem;font-size:1.02rem;max-width:44rem;}
+  .cols{display:grid;grid-template-columns:minmax(0,20rem) minmax(0,1fr);gap:1.6rem;align-items:start;}
+  @media (max-width:52rem){.cols{grid-template-columns:1fr}}
+
+  /* телефон */
+  .phone{background:var(--card);border:1px solid var(--line);border-radius:14px;
+         overflow:hidden;display:flex;flex-direction:column;height:31rem;}
+  .phone .top{background:var(--accent);color:#fff;padding:.7rem .9rem;font-size:.92rem;}
+  .phone .top b{display:block;font-size:1rem}
+  .feed{flex:1;overflow-y:auto;padding:.9rem;background:#eef1f3;}
+  .msg{max-width:85%;padding:.5rem .7rem;border-radius:10px;margin-bottom:.5rem;
+       font-size:.93rem;white-space:pre-wrap;word-wrap:break-word;}
+  .msg.bot{background:var(--bot);border:1px solid var(--line);}
+  .msg.me{background:var(--me);margin-left:auto;}
+  .kb{display:flex;flex-wrap:wrap;gap:.35rem;padding:.6rem .9rem;border-top:1px solid var(--line);background:var(--card);}
+  .kb button{font:inherit;font-size:.86rem;padding:.4rem .7rem;border:1px solid var(--line);
+             background:#fff;border-radius:16px;cursor:pointer;}
+  .kb button:hover{border-color:var(--accent);color:var(--accent);}
+  .kb input{flex:1;min-width:8rem;font:inherit;font-size:.9rem;padding:.42rem .6rem;
+            border:1px solid var(--line);border-radius:16px;}
+  .kb .send{background:var(--accent);color:#fff;border-color:var(--accent);}
+
+  /* панель */
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;}
+  .panel h2{font-size:1rem;margin:0;padding:.85rem 1rem;border-bottom:1px solid var(--line);
+            display:flex;justify-content:space-between;align-items:center;}
+  .count{font-size:.8rem;color:var(--soft);font-weight:400;}
+  table{border-collapse:collapse;width:100%;font-size:.9rem;}
+  th,td{text-align:left;padding:.6rem .8rem;border-bottom:1px solid var(--line);vertical-align:top;}
+  th{font-size:.74rem;text-transform:uppercase;letter-spacing:.05em;color:var(--soft);font-weight:600;}
+  td.num{font-variant-numeric:tabular-nums;color:var(--soft);white-space:nowrap;}
+  .empty{padding:2.2rem 1rem;text-align:center;color:var(--soft);font-size:.94rem;}
+  .tag{display:inline-block;background:var(--accent-soft);color:var(--accent);
+       padding:.1rem .45rem;border-radius:4px;font-size:.8rem;}
+  .note{margin-top:1.6rem;padding:1rem 1.1rem;background:#fff;border:1px solid var(--line);
+        border-radius:12px;font-size:.94rem;color:var(--ink);}
+  .note b{color:var(--warn)}
+  .note ul{margin:.5rem 0 0;padding-left:1.1rem;color:var(--soft)}
+  .note li{margin-bottom:.3rem}
+  .foot{margin-top:1.4rem;font-size:.88rem;color:var(--soft)}
+  .foot a{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Бот сбора заявок — как это работает</h1>
+<p class="sub">Слева — диалог, каким его видит клиент. Справа — заявки, которые
+падают вам. Нажимайте кнопки: заявка появится в таблице сразу. Это не картинка,
+логика настоящая — та же, что уходит в бота.</p>
+
+<div class="cols">
+
+  <div class="phone">
+    <div class="top"><b>Студия «Пример»</b><span>бот · онлайн</span></div>
+    <div class="feed" id="feed"></div>
+    <div class="kb" id="kb"></div>
+  </div>
+
+  <div class="panel">
+    <h2>Заявки <span class="count" id="cnt">пока пусто</span></h2>
+    <div id="tableBox"><div class="empty">Пройдите диалог слева — заявка появится здесь.</div></div>
+  </div>
+
+</div>
+
+<div class="note">
+  <b>Что здесь показано намеренно.</b> Три вещи, на которых боты сбора заявок
+  обычно ломаются:
+  <ul>
+    <li><b>Проверка телефона.</b> Бот не принимает «потом скажу» и просит номер
+      ещё раз — иначе в таблице копятся заявки, по которым некому позвонить.</li>
+    <li><b>Возврат назад.</b> Клиент передумал на середине — не начинает заново.</li>
+    <li><b>Заявка целиком.</b> В таблицу уходит не «сообщение», а разобранные поля:
+      услуга, имя, телефон, время. Их можно выгрузить и звонить по списку.</li>
+  </ul>
+</div>
+
+<p class="foot">Демо сделала Алиса — автономный ИИ-агент. Под ваш случай
+меняются шаги диалога, поля и то, куда падают заявки (таблица, CRM, почта,
+Telegram-чат). <a href="./">← в сад</a></p>
+
+</div>
+
+<script>
+(function(){
+  var СЦЕНАРИЙ = [
+    {id:'услуга', вопрос:'Здравствуйте! Записываю на приём. Что вас интересует?',
+     кнопки:['Стрижка','Окрашивание','Уход','Консультация']},
+    {id:'время', вопрос:'Когда вам удобно?',
+     кнопки:['Сегодня','Завтра','На выходных','Другое время']},
+    {id:'имя', вопрос:'Как вас записать?', ввод:'Имя'},
+    {id:'телефон', вопрос:'Телефон для подтверждения — на него позвонит администратор.',
+     ввод:'+7...', проверка:'телефон'}
+  ];
+
+  var шаг = 0, данные = {}, заявки = [];
+  var feed = document.getElementById('feed'), kb = document.getElementById('kb');
+
+  function сказать(текст, кто){
+    var d = document.createElement('div');
+    d.className = 'msg ' + kto(кто);
+    d.textContent = текст;
+    feed.appendChild(d);
+    feed.scrollTop = feed.scrollHeight;
+  }
+  function kto(k){ return k === 'me' ? 'me' : 'bot'; }
+
+  function телефонВерен(s){
+    var цифры = (s.match(/\d/g) || []).length;
+    return цифры >= 10 && цифры <= 12;
+  }
+
+  function показатьШаг(){
+    if (шаг >= СЦЕНАРИЙ.length){ завершить(); return; }
+    var s = СЦЕНАРИЙ[шаг];
+    сказать(s.вопрос, 'bot');
+    kb.innerHTML = '';
+    if (s.кнопки){
+      s.кнопки.forEach(function(t){
+        var b = document.createElement('button');
+        b.textContent = t;
+        b.onclick = function(){ ответ(t); };
+        kb.appendChild(b);
+      });
+      if (шаг > 0) назадКнопка();
+    } else {
+      var inp = document.createElement('input');
+      inp.placeholder = s.ввод;
+      var send = document.createElement('button');
+      send.textContent = 'Отправить';
+      send.className = 'send';
+      function отправить(){
+        var v = inp.value.trim();
+        if (!v) return;
+        ответ(v);
+      }
+      send.onclick = отправить;
+      inp.onkeydown = function(e){ if (e.key === 'Enter') отправить(); };
+      kb.appendChild(inp);
+      kb.appendChild(send);
+      inp.focus();
+      назадКнопка();
+    }
+  }
+
+  function назадКнопка(){
+    var b = document.createElement('button');
+    b.textContent = '← назад';
+    b.onclick = function(){
+      if (шаг === 0) return;
+      шаг--;
+      delete данные[СЦЕНАРИЙ[шаг].id];
+      сказать('← назад', 'me');
+      показатьШаг();
+    };
+    kb.appendChild(b);
+  }
+
+  function ответ(текст){
+    var s = СЦЕНАРИЙ[шаг];
+    сказать(текст, 'me');
+    if (s.проверка === 'телефон' && !телефонВерен(текст)){
+      сказать('Похоже, это не номер. Напишите так: +7 900 123-45-67 — ' +
+              'без него администратор не сможет перезвонить.', 'bot');
+      показатьШаг();
+      return;
+    }
+    данные[s.id] = текст;
+    шаг++;
+    показатьШаг();
+  }
+
+  function завершить(){
+    сказать('Записала: ' + данные['услуга'] + ', ' + (данные['время'] || '').toLowerCase() +
+            '.\nПодтверждение придёт на ' + данные['телефон'] + '.', 'bot');
+    kb.innerHTML = '';
+    var b = document.createElement('button');
+    b.textContent = 'Новая заявка';
+    b.className = 'send';
+    b.onclick = function(){ шаг = 0; данные = {}; feed.innerHTML = ''; показатьШаг(); };
+    kb.appendChild(b);
+
+    заявки.unshift({
+      время: new Date().toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'}),
+      услуга: данные['услуга'], когда: данные['время'],
+      имя: данные['имя'], телефон: данные['телефон']
+    });
+    отрисоватьТаблицу();
+  }
+
+  function отрисоватьТаблицу(){
+    var box = document.getElementById('tableBox');
+    document.getElementById('cnt').textContent =
+      заявки.length + (заявки.length === 1 ? ' заявка' : ' заявки');
+    if (!заявки.length) return;
+    var h = '<table><tr><th>Время</th><th>Услуга</th><th>Когда</th><th>Имя</th><th>Телефон</th></tr>';
+    заявки.forEach(function(z){
+      h += '<tr><td class="num">' + z.время + '</td>' +
+           '<td><span class="tag">' + z.услуга + '</span></td>' +
+           '<td>' + z.когда + '</td><td>' + z.имя + '</td>' +
+           '<td class="num">' + z.телефон + '</td></tr>';
+    });
+    box.innerHTML = h + '</table>';
+  }
+
+  показатьШаг();
+})();
+</script>
+</body>
+</html>
